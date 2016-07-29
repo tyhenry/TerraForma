@@ -16,6 +16,17 @@ void Layer::loadVideo(string videoFile){
     vid.play();
 }
 
+void Layer::loadAudio(string audioFile){
+
+    
+    sounds.push_back(ofSoundPlayer());
+    sounds.back().load(audioFile);
+    if (bApache) {
+        sounds.back().setLoop(true);
+        sounds.back().play();
+    }
+}
+
 void Layer::setThresholds(int near, int far){
     
     nearThresh = near;
@@ -34,6 +45,15 @@ void Layer::update(ofImage& depthImg){
         frame.setFromPixels(vid.getPixels());
         threshold(depthImg);
         vid.setVolume(min(pctShown*2.0,1.0));
+    }
+    
+    if (bApache) {
+        sounds[0].setVolume(min(pctShown*2.0,1.0)); // ambient track
+
+        // check if audio was triggered and is now time to end clip
+        if (ofGetElapsedTimef() - apacheSoundTriggerTime >= apacheSoundLength){
+            vid.setVolume(0);
+        }
     }
 }
 
@@ -75,6 +95,29 @@ void Layer::draw(float x, float y, float w, float h){
     layer.draw(x,y,w,h);
     
     ofPopStyle();
+}
+
+void Layer::triggerSound(){
+    
+    if (!bApache){
+    
+    int nSounds = sounds.size();  if (nSounds == 0) return;
+    
+    int selection = ofRandom(nSounds); // random selection
+    if (selection == nSounds) selection = 0;
+    
+    sounds[selection].setVolume(min(pctShown*2.0,1.0));
+    sounds[selection].play();
+        
+    } else {
+        
+        // specific method for apache heli video
+        // raise volume for 5 - 10 seconds
+        apacheSoundLength = ofRandom(5,10);
+        apacheSoundTriggerTime = ofGetElapsedTimef(); // start sound (will happen in update w/ vid.setVolume())
+        
+    }
+    
 }
 
 void Layer::drawFrame(float x, float y, float w, float h){

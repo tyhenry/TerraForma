@@ -13,9 +13,9 @@ using namespace ofxCv;
 
 enum Thresh {
     TOP = 255,
-    THRESH0 = 150,
-    THRESH1 = 115,
-    THRESH2 = 80,
+    THRESH0 = 128, // 150,
+    THRESH1 = 76, //115,
+    THRESH2 = 29, //80,
     BOTTOM = 0
 };
 
@@ -41,6 +41,7 @@ public:
     void draw();
     void warpKinect();
     void autoSetKinectWarp();
+    void playSoundbites();
     void exit();
     
     void keyPressed(int key);
@@ -56,6 +57,7 @@ public:
     void gotMessage(ofMessage msg);
     
     vector<Layer> layers;
+    vector<float> layersPctShown; //tracks layers visibility %
     
     ofxKinect kinect;
     ofImage kinectRaw, kinectWarp, pKinectWarp;
@@ -79,7 +81,9 @@ public:
     int mode = NORMAL;
     
     float width, height;
+    float lastSoundbiteTime = 0;
+    float timeBtwnSoundbites = 10; // 10s between sounds
     
-    bool bWarped = false;
+    bool bWarped = true;
 		
 };

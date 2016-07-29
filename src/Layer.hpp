@@ -23,9 +23,12 @@ public:
     void loadAudio(string audioFile);
     void setThresholds(int near, int far);
     void setColor(ofColor tint);
+    void setApache(bool apache=true) { bApache = apache; }
     
     void update(ofImage& depthImg);
     void draw(float x, float y, float w, float h);
+    
+    void triggerSound();
     
     void drawFrame(float x, float y, float w, float h);
     void drawMask(float x, float y, float w, float h);
@@ -42,4 +45,11 @@ public:
     
     int vidW, vidH;
     ofColor color = ofColor::white;
+    
+    vector<ofSoundPlayer> sounds;
+    
+    bool bApache = false; // apache video has one sound track in sync with video
+    // so triggers alter volume rather than play a sound
+    float apacheSoundLength = 8.0; // default 8 seconds clip length
+    float apacheSoundTriggerTime = 0; // when was last triggered
 };
